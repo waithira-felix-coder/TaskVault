@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> To-Do App</title>
+  <style>
+  /* NEON TO-DO APP CSS */
+  *{ 
+    margin:0; 
+    padding:0;
+    box-sizing:border-box; 
+    font-family:'Poppins',sans-serif; 
+  }
+  body{
+     background: radial-gradient(circle at top, #0a0f24,#000); 
+     color:#fff; 
+     display:flex; 
+     justify-content:center; 
+     padding-top:40px; }
+  .wrapper{
+     width:380px; 
+     background:rgba(255,255,255,0.05); 
+     padding:25px; 
+     border-radius:20px; 
+     backdrop-filter:blur(12px); 
+     box-shadow:0 0 20px rgba(0,255,255,0.2), inset 0 0 25px rgba(255,255,255,0.05); 
+    }
+  h2{
+     text-align:center; 
+     margin-bottom:20px; 
+     color:cyan; 
+     text-shadow:0 0 10px cyan; 
+    }
+  .input-area{
+     display:flex;
+     gap:8px; 
+     flex-wrap:wrap;
+   }
+  input[type="text"]{
+     flex:1; 
+     min-width:150px; 
+     padding:10px; 
+     border-radius:10px; 
+     border:none; 
+     background:rgba(255,255,255,0.1); 
+     color:#fff; 
+    }
+  input[type="datetime-local"]{
+     flex:0 1 140px; padding:10px; 
+     border-radius:10px;
+      border:none; 
+      background:rgba(255,255,255,0.1); 
+      color:#fff; cursor:pointer;
+     }
+  input[type="datetime-local"]::-webkit-calendar-picker-indicator{ filter:invert(1); opacity:0.7;
+     cursor:pointer;
+     }
+  button.add{
+     background:cyan;
+     color:#000; 
+     border:none; 
+     padding:10px 12px; 
+     border-radius:10px; 
+     cursor:pointer;
+     font-weight:600; 
+     box-shadow:0 0 10px cyan; 
+     flex-shrink:0; 
+    }
+  ul{
+     list-style:none; 
+     margin-top:22px;
+    }
+  li{ 
+    padding:12px;
+     background:rgba(255,255,255,0.08); 
+     margin-bottom:12px; 
+     border-radius:12px; 
+     display:flex; 
+     justify-content:space-between; 
+     align-items:center; 
+     transition:.3s; 
+     border-left:4px solid cyan; 
+    }
+  li:hover{ 
+    transform:scale(1.02); 
+    box-shadow:0 0 15px rgba(0,255,255,0.2);
+   }
+  .actions button{ 
+    margin-left:6px; 
+    padding:5px 10px; 
+    border:none; 
+    border-radius:6px; 
+    font-size:12px; 
+    font-weight:600; 
+    cursor:pointer; 
+  }
+  .complete-btn{
+     background:#22c55e;
+    } 
+    .edit-btn{ 
+      background:#38bdf8;
+     } 
+     .delete-btn{
+       background:#ef4444; 
+      }
+  .completed{
+     text-decoration:line-through; 
+     opacity:.6; 
+    }
+  .filter-buttons{ 
+    display:flex; 
+    justify-content:space-between; 
+    margin-top:15px;
+   }
+  .filter-buttons button{ 
+    flex:1; 
+    margin:0 5px; 
+    background:#334155; 
+    padding:8px; 
+    border:none; 
+    border-radius:8px; 
+    color:#fff; 
+    cursor:pointer; 
+  }
+  .dark-mode{ 
+    background:#ffffff; 
+    color:#000; 
+  }
+  .dark-mode .wrapper{ 
+    background:rgba(0,0,0,0.2); 
+  }
+  .dark-toggle{ 
+    margin-top:15px; 
+    text-align:center; 
+  }
+  .dark-toggle button{ 
+    background:#0ea5e9; 
+    padding:8px 12px; 
+    border:none; 
+    border-radius:10px; 
+    color:#fff; 
+    cursor:pointer; 
+  }
+  .modal{ 
+    display:none; 
+    position:fixed; 
+    top:0; left:0; 
+    width:100%; height:100%; 
+    background:rgba(0,0,0,0.7);
+    justify-content:center; 
+    align-items:center; 
+    z-index:1000; 
+  }
+  .modal.active{ display:flex; }
+  .modal-content{ 
+    background:rgba(255,255,255,0.1); 
+    backdrop-filter:blur(12px); 
+    border-radius:20px; 
+    padding:25px; 
+    width:90%; 
+    max-width:400px; 
+    color:#fff; 
+    box-shadow:0 0 20px rgba(0,255,255,0.3); 
+  }
+  .modal-content h3{ 
+    color:cyan; 
+    margin-bottom:15px; 
+  }
+  .modal-content label{ 
+    display:block; 
+    margin:10px 0 5px; 
+    font-size:14px; 
+  }
+  .modal-content input, .modal-content select{ 
+    width:100%; 
+    padding:10px; margin-bottom:15px; 
+    border-radius:8px; border:none; 
+    background:rgba(255,255,255,0.1); 
+    color:#fff; 
+  }
+  .modal-content input::placeholder{ color:#aaa; }
+  .modal-buttons{ 
+    display:flex; 
+    gap:10px; margin-top:15px; 
+  }
+  .modal-buttons button{ 
+    flex:1; 
+    padding:10px; 
+    border:none; 
+    border-radius:8px; 
+    cursor:pointer; 
+    font-weight:600; 
+  }
+  .modal-buttons .btn-save{ 
+    background:cyan; 
+    color:#000; 
+  }
+  .modal-buttons .btn-cancel{ 
+    background:#666; 
+    color:#fff; 
+  }
+  .notification-btn{ 
+    background:#fbbf24; 
+    color:#000; 
+    margin-top:10px; 
+    padding:8px 12px; 
+    border:none; 
+    border-radius:10px; 
+    cursor:pointer; }
+  </style>
+</head>
+<body>
+  <!-- PIN Screen -->
+  <div id="pinScreen" style="width:380px;background:rgba(255,255,255,0.05);padding:25px;border-radius:20px;backdrop-filter:blur(12px);box-shadow:0 0 20px rgba(0,255,255,0.2);text-align:center;"></div>
+
+  <!-- To-Do App -->
+  <div class="wrapper" id="todoApp" style="display:none;">
+    <h2>My To-Do List 🕒</h2>
+    <div class="input-area">
+      <input type="text" id="taskInput" placeholder="Add a new task...">
+      <input type="datetime-local" id="dueDate">
+      <button class="add">+</button>
+    </div>
+    <div class="filter-buttons">
+      <button id="filterAll">All</button>
+      <button id="filterCompleted">Completed</button>
+      <button id="filterPending">Pending</button>
+      <button id="filterOverdue">Overdue</button>
+      <button id="filterDueToday">Due Today</button>
+    </div>
+    <ul id="taskList"></ul>
+    <div class="dark-toggle">
+      <button id="darkToggle">Dark Mode</button>
+      <button id="changePinBtn" style="margin-top:10px;background:#0ea5e9;color:#fff;padding:8px 12px;border:none;border-radius:10px;cursor:pointer;">Change PIN</button>
+      <button id="notificationBtn" class="notification-btn">🔔 Notifications</button>
+    </div>
+  </div>
+
+  <!-- Sort Order Button (hidden initially, shown in filter area) -->
+  <style>
+    #sortOrderBtn { background:#9333ea; color:#fff; margin-top:10px; padding:8px 12px; border:none; border-radius:10px; cursor:pointer; font-size:13px; }
+  </style>
+
+  <!-- Notification Settings Modal -->
+  <div id="notificationModal" class="modal">
+    <div class="modal-content">
+      <h3>Notification Settings</h3>
+      <label>Enable Notifications:</label>
+      <input type="checkbox" id="notifEnabled" style="width:auto;margin-bottom:15px;">
+      <label>Remind me every (minutes):</label>
+      <input type="number" id="notifInterval" placeholder="15" min="1" max="120" value="15">
+      <label>Notify for:</label>
+      <select id="notifFilter">
+        <option value="all">All Tasks</option>
+        <option value="pending">Pending Tasks Only</option>
+      </select>
+      <div class="modal-buttons">
+        <button class="btn-save" onclick="saveNotificationSettings()">Save</button>
+        <button class="btn-cancel" onclick="closeNotificationModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const pinScreen = document.getElementById('pinScreen');
+    const todoApp = document.getElementById('todoApp');
+    const addBtn = document.querySelector('.add');
+    const filterAll = document.getElementById('filterAll');
+    const filterCompleted = document.getElementById('filterCompleted');
+    const filterPending = document.getElementById('filterPending');
+    const darkToggle = document.getElementById('darkToggle');
+    const changePinBtn = document.getElementById('changePinBtn');
+
+    // stored value is a hash of the PIN
+    let savedPINHash = localStorage.getItem('userPIN');
+    let tasks = [];
+    let notificationInterval = null;
+    let sortNewestFirst = localStorage.getItem('sortNewestFirst') !== 'false'; // default: newest first
+
+    // Notification settings
+    function loadNotificationSettings(){
+      const enabled = localStorage.getItem('notifEnabled') === 'true';
+      const interval = parseInt(localStorage.getItem('notifInterval') || '15');
+      const filter = localStorage.getItem('notifFilter') || 'all';
+      return { enabled, interval, filter };
+    }
+
+    function saveNotificationSettingsLocal(){
+      const enabled = document.getElementById('notifEnabled').checked;
+      const interval = parseInt(document.getElementById('notifInterval').value) || 15;
+      const filter = document.getElementById('notifFilter').value;
+      localStorage.setItem('notifEnabled', enabled);
+      localStorage.setItem('notifInterval', interval);
+      localStorage.setItem('notifFilter', filter);
+      alert('Notification settings saved!');
+      closeNotificationModal();
+      if(enabled) startNotificationLoop();
+      else stopNotificationLoop();
+    }
+
+    function closeNotificationModal(){
+      document.getElementById('notificationModal').classList.remove('active');
+    }
+
+    // Request notification permission
+    function requestNotificationPermission(){
+      if('Notification' in window && Notification.permission === 'default'){
+        Notification.requestPermission();
+      }
+    }
+
+    // Send a notification
+    function sendNotification(title, options = {}){
+      if('Notification' in window && Notification.permission === 'granted'){
+        new Notification(title, { icon: '📋', ...options });
+      }
+    }
+
+    // Get pending tasks for notification
+    function getPendingTasksForNotif(filter){
+      if(filter === 'pending') return tasks.filter(t => !t.completed);
+      return tasks;
+    }
+
+    // Show notification with tasks
+    function showTaskNotification(){
+      const settings = loadNotificationSettings();
+      if(!settings.enabled) return;
+      const tasksToShow = getPendingTasksForNotif(settings.filter);
+      if(tasksToShow.length === 0) return;
+      
+      // Prioritize overdue and due today tasks
+      const overdue = tasksToShow.filter(t => t.dueDate && t.dueDate < Date.now() && !t.completed);
+      const dueToday = tasksToShow.filter(t => {
+        if(!t.dueDate || t.completed) return false;
+        const today = new Date();
+        today.setHours(0,0,0,0);
+        const dueDay = new Date(t.dueDate);
+        dueDay.setHours(0,0,0,0);
+        return dueDay.getTime() === today.getTime();
+      });
+      const other = tasksToShow.filter(t => !(overdue.includes(t) || dueToday.includes(t)));
+      
+      let priority = [...overdue, ...dueToday, ...other].slice(0, 3);
+      const taskList = priority.map(t => '• ' + t.text).join('\n');
+      const moreText = tasksToShow.length > 3 ? `\n... and ${tasksToShow.length - 3} more` : '';
+      const title = overdue.length > 0 ? '🔴 OVERDUE TASKS!' : '📌 Your Tasks';
+      sendNotification(title, { body: taskList + moreText });
+    }
+
+    // Start notification loop
+    function startNotificationLoop(){
+      const settings = loadNotificationSettings();
+      if(notificationInterval) clearInterval(notificationInterval);
+      notificationInterval = setInterval(showTaskNotification, settings.interval * 60 * 1000);
+      // Send first notification after 10 seconds
+      setTimeout(showTaskNotification, 10000);
+    }
+
+    // Stop notification loop
+    function stopNotificationLoop(){
+      if(notificationInterval){
+        clearInterval(notificationInterval);
+        notificationInterval = null;
+      }
+    }
+
+    // Expose functions to window scope
+    window.saveNotificationSettings = saveNotificationSettingsLocal;
+    window.closeNotificationModal = closeNotificationModal;
+
+    // Hash a PIN using SHA-256 and return hex string
+    async function hashPIN(pin){
+      const enc = new TextEncoder();
+      const data = enc.encode(pin);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    function tasksKey(hash){ return 'tasks_' + (hash ?? savedPINHash ?? 'default'); }
+
+    function renderPinScreen(){
+      // build either create PIN or enter PIN view
+  if(!savedPINHash){
+        pinScreen.innerHTML = `
+          <h2 style="color:cyan;text-shadow:0 0 10px cyan;">Create Your PIN</h2>
+          <input type='password' id='pinInput' placeholder='Set new PIN' style='width:100%;padding:12px;margin-top:15px;border-radius:10px;border:none;background:rgba(255,255,255,0.1);color:white;'>
+          <button id="savePinBtn" style='margin-top:15px;background:cyan;color:black;padding:10px 15px;border:none;border-radius:10px;cursor:pointer;font-weight:600;width:100%;'>Save PIN</button>
+        `;
+        document.getElementById('savePinBtn').addEventListener('click', createPIN);
+      } else {
+        pinScreen.innerHTML = `
+          <h2 style="color:cyan;text-shadow:0 0 10px cyan;">Enter PIN</h2>
+          <input type='password' id='pinInput' placeholder='Enter PIN' style='width:100%;padding:12px;margin-top:15px;border-radius:10px;border:none;background:rgba(255,255,255,0.1);color:white;'>
+          <button id="unlockBtn" style='margin-top:15px;background:cyan;color:black;padding:10px 15px;border:none;border-radius:10px;cursor:pointer;font-weight:600;width:100%;'>Unlock</button>
+          <button id="forgotPinBtn" style='margin-top:10px;background:#ef4444;color:#fff;padding:8px 12px;border:none;border-radius:10px;cursor:pointer;width:100%;'>Forgot PIN?</button>
+          <div style='margin-top:8px;font-size:13px;color:#f87171;'>Resetting will erase all tasks!</div>
+        `;
+        document.getElementById('unlockBtn').addEventListener('click', checkPIN);
+        document.getElementById('forgotPinBtn').addEventListener('click', resetPIN);
+      }
+      pinScreen.style.display = 'block';
+      todoApp.style.display = 'none';
+    }
+
+    async function createPIN(){
+      const inputEl = document.getElementById('pinInput');
+      const newPIN = inputEl.value.trim();
+      if(!newPIN || newPIN.length<4){ alert('PIN must be at least 4 digits.'); return; }
+      const h = await hashPIN(newPIN);
+      localStorage.setItem('userPIN', h);
+      savedPINHash = h;
+      // initialize empty tasks for new pin
+      localStorage.setItem(tasksKey(h), JSON.stringify([]));
+      alert('PIN created! Reloading...');
+      location.reload();
+    }
+
+    async function checkPIN(){
+      const input = document.getElementById('pinInput').value.trim();
+      const h = await hashPIN(input);
+      if(h === savedPINHash) unlockApp();
+      else { document.getElementById('pinInput').value=''; alert('Incorrect PIN!'); }
+    }
+
+    function unlockApp(){
+      pinScreen.style.display='none';
+      todoApp.style.display='block';
+      loadTasks();
+      renderTasks();
+      requestNotificationPermission();
+      const settings = loadNotificationSettings();
+      if(settings.enabled) startNotificationLoop();
+    }
+
+    function loadTasks(){
+      const raw = localStorage.getItem(tasksKey());
+      tasks = raw ? JSON.parse(raw) : [];
+    }
+
+    function saveTasks(){
+      localStorage.setItem(tasksKey(), JSON.stringify(tasks));
+    }
+
+    function addTask(){
+      const text = document.getElementById('taskInput').value.trim();
+      const dueDateInput = document.getElementById('dueDate').value;
+      if(!text) return;
+      tasks.push({text, completed:false, createdAt: Date.now(), dueDate: dueDateInput ? new Date(dueDateInput).getTime() : null});
+      saveTasks();
+      renderTasks();
+      document.getElementById('taskInput').value='';
+      document.getElementById('dueDate').value='';
+    }
+
+    function deleteTask(i){ tasks.splice(i,1); saveTasks(); renderTasks(); }
+    function editTask(i){ 
+      const t = tasks[i]; 
+      const updated = prompt('Edit task', t.text); 
+      if(updated && updated.trim()!==''){ 
+        t.text = updated.trim(); 
+        saveTasks(); 
+        renderTasks(); 
+      } 
+    }
+    function completeTask(i){ tasks[i].completed = !tasks[i].completed; saveTasks(); renderTasks(); }
+
+    function renderTasks(filter='all'){
+      const ul = document.getElementById('taskList');
+      ul.innerHTML='';
+      
+      // Sort tasks by creation date (respecting user preference)
+      const sorted = [...tasks].sort((a, b) => {
+        const diff = (b.createdAt || 0) - (a.createdAt || 0);
+        return sortNewestFirst ? diff : -diff;
+      });
+      
+      sorted.forEach((t,i)=>{
+        const origIndex = tasks.indexOf(t);
+        
+        // Apply filters
+        if(filter==='completed' && !t.completed) return;
+        if(filter==='pending' && t.completed) return;
+        if(filter==='overdue' && (t.completed || !t.dueDate || t.dueDate >= Date.now())) return;
+        if(filter==='due-today'){
+          const today = new Date();
+          today.setHours(0,0,0,0);
+          const dueDay = new Date(t.dueDate || 0);
+          dueDay.setHours(0,0,0,0);
+          if(t.completed || !t.dueDate || dueDay.getTime() !== today.getTime()) return;
+        }
+        
+        const li = document.createElement('li');
+        if(t.completed) li.classList.add('completed');
+
+        // Format creation date
+        const dateStr = t.createdAt ? new Date(t.createdAt).toLocaleDateString('en-US', {month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'}) : 'No date';
+        
+        // Format and check due date status
+        let dueStr = '';
+        let dueStatus = '';
+        if(t.dueDate){
+          const now = Date.now();
+          const dueDate = new Date(t.dueDate);
+          const today = new Date();
+          today.setHours(0,0,0,0);
+          const dueDay = new Date(t.dueDate);
+          dueDay.setHours(0,0,0,0);
+          
+          dueStr = dueDate.toLocaleDateString('en-US', {month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'});
+          
+          if(t.dueDate < now && !t.completed){
+            dueStatus = '🔴 OVERDUE';
+          } else if(dueDay.getTime() === today.getTime()){
+            dueStatus = '🟡 DUE TODAY';
+          } else if(t.dueDate > now){
+            const daysLeft = Math.ceil((t.dueDate - now) / (1000 * 60 * 60 * 24));
+            dueStatus = `🟢 ${daysLeft}d left`;
+          }
+        }
+        
+        const span = document.createElement('span');
+        span.innerHTML = `<strong>${t.text}</strong><br><small style="color:#aaa;font-size:11px;">📅 Created: ${dateStr}</small>${dueStr ? `<br><small style="color:#fbbf24;font-size:11px;">⏰ Due: ${dueStr} ${dueStatus}</small>` : ''}`;
+
+        const actions = document.createElement('div');
+        actions.className = 'actions';
+
+        const doneBtn = document.createElement('button'); doneBtn.className='complete-btn'; doneBtn.textContent='Done'; doneBtn.addEventListener('click', ()=>completeTask(origIndex));
+        const editBtn = document.createElement('button'); editBtn.className='edit-btn'; editBtn.textContent='Edit'; editBtn.addEventListener('click', ()=>editTask(origIndex));
+        const delBtn = document.createElement('button'); delBtn.className='delete-btn'; delBtn.textContent='Delete'; delBtn.addEventListener('click', ()=>deleteTask(origIndex));
+
+        actions.appendChild(doneBtn); actions.appendChild(editBtn); actions.appendChild(delBtn);
+        li.appendChild(span); li.appendChild(actions);
+        ul.appendChild(li);
+      });
+    }
+
+    async function changePIN(){
+      const oldPIN = prompt('Enter your current PIN:');
+      if(!oldPIN) return;
+      const oldHash = await hashPIN(oldPIN);
+      if(oldHash !== savedPINHash){ alert('Incorrect current PIN!'); return; }
+      const newPIN = prompt('Enter new PIN (at least 4 digits):');
+      if(!newPIN || newPIN.length<4){ alert('PIN must be at least 4 digits.'); return; }
+      const newHash = await hashPIN(newPIN);
+      if(newHash === savedPINHash){ alert('New PIN must be different.'); return; }
+
+      // Migrate tasks to new PIN key
+      const oldKey = tasksKey();
+      const oldTasks = localStorage.getItem(oldKey);
+      localStorage.setItem('userPIN', newHash);
+      savedPINHash = newHash;
+      if(oldTasks){
+        localStorage.setItem(tasksKey(newHash), oldTasks);
+        localStorage.removeItem(oldKey);
+      }
+      alert('PIN changed! Reloading...');
+      location.reload();
+    }
+
+    function resetPIN(){
+      if(confirm('Resetting your PIN will erase all tasks. Continue?')){
+        const pinHash = savedPINHash;
+        localStorage.removeItem('userPIN');
+        localStorage.removeItem(tasksKey(pinHash));
+        savedPINHash = null;
+        alert('PIN and tasks erased. Please set a new PIN.');
+        renderPinScreen();
+      }
+    }
+
+    function toggleSortOrder(){
+      sortNewestFirst = !sortNewestFirst;
+      localStorage.setItem('sortNewestFirst', sortNewestFirst);
+      const btn = document.getElementById('sortOrderBtn');
+      btn.textContent = sortNewestFirst ? '⬇️ Newest First' : '⬆️ Oldest First';
+      renderTasks();
+    }
+
+    // Expose change function if needed
+    window.changePIN = changePIN;
+
+    addBtn.addEventListener('click', addTask);
+    filterAll.addEventListener('click', ()=>renderTasks('all'));
+    filterCompleted.addEventListener('click', ()=>renderTasks('completed'));
+    filterPending.addEventListener('click', ()=>renderTasks('pending'));
+    document.getElementById('filterOverdue').addEventListener('click', ()=>renderTasks('overdue'));
+    document.getElementById('filterDueToday').addEventListener('click', ()=>renderTasks('due-today'));
+    darkToggle.addEventListener('click', ()=>document.body.classList.toggle('dark-mode'));
+    changePinBtn.addEventListener('click', changePIN);
+    
+    // Notification button
+    document.getElementById('notificationBtn').addEventListener('click', ()=>{
+      const settings = loadNotificationSettings();
+      document.getElementById('notifEnabled').checked = settings.enabled;
+      document.getElementById('notifInterval').value = settings.interval;
+      document.getElementById('notifFilter').value = settings.filter;
+      document.getElementById('notificationModal').classList.add('active');
+    });
+
+    // Close modal on background click
+    document.getElementById('notificationModal').addEventListener('click', (e)=>{
+      if(e.target.id === 'notificationModal') closeNotificationModal();
+    });
+
+    // Create and add sort button dynamically
+    const sortBtn = document.createElement('button');
+    sortBtn.id = 'sortOrderBtn';
+    sortBtn.textContent = sortNewestFirst ? '⬇️ Newest First' : '⬆️ Oldest First';
+    sortBtn.addEventListener('click', toggleSortOrder);
+    const darkToggleDiv = document.querySelector('.dark-toggle');
+    darkToggleDiv.appendChild(sortBtn);
+
+    renderPinScreen();
+  });
+  </script>
+</body>
+</html>
