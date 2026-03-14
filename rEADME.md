@@ -2,8 +2,12 @@
 
 A secure, feature-rich to-do application built with vanilla HTML, CSS, and JavaScript. Manage your tasks with PIN protection, deadline tracking, smart notifications, and more!
 
-## ✨ Features
+###View the liveSite:
+https://waithira-felix-coder.github.io/TaskVault/
 
+##Screenshots:
+![AppLogin Page](
+##  Features
 ### 🔐 Security
 - **PIN-Protected Access** - Secure your tasks with a PIN
 - **SHA-256 Hashing** - Industry-standard cryptographic security
@@ -326,6 +330,4 @@ Stay organized, never miss a deadline, and accomplish your goals!
 
 ---
 
-**Version:** 1.0  
-**Last Updated:** November 15, 2025  
-**Status:** Production Ready ✅
+
