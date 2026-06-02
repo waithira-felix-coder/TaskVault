@@ -174,7 +174,7 @@ https://waithira-felix-coder.github.io/TaskVault/
 ## 📖 Documentation
 
 For detailed development history, technical decisions, and implementation details, see:
-- **[DEVELOPMENT_LOG.md](./DEVELOPMENT_LOG.md)** - Complete development journey with all phases, features, and lessons learned
+ Complete development journey with all phases, features, and lessons learned
 
 ## 🗂️ File Structure
 
@@ -322,9 +322,8 @@ A: It's a web app! Just bookmark it or install as PWA (coming soon).
 ## 📞 Support
 
 For issues or questions:
-1. Check [DEVELOPMENT_LOG.md](./DEVELOPMENT_LOG.md) for technical details
-2. Review this README for common questions
-3. Check browser console (F12) for error messages
+1. Review this README for common questions
+2. Check browser console (F12) for error messages
 
 ## 🎉 Enjoy Your To-Do App!
 
